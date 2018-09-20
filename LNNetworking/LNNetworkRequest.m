@@ -24,22 +24,18 @@
 #pragma mark - Methods
 
 - (void)loadDataWithPath:(NSString *)path {
-    [self loadDataWithPath:path parameters:nil success:nil];
+    [self loadDataWithPath:path parameters:nil callBack:nil];
 }
 
-- (void)loadDataWithPath:(NSString *)path parameters:(NSDictionary *)parameters {
-    [self loadDataWithPath:path parameters:parameters success:nil];
+- (void)loadDataWithPath:(NSString *)path parameters:(nullable NSDictionary *)parameters {
+    [self loadDataWithPath:path parameters:parameters callBack:nil];
 }
 
-- (void)loadDataWithPath:(NSString *)path parameters:(NSDictionary *)parameters complete:(void (^)(id))complete {
-    [self loadDataWithPath:path parameters:parameters success:nil complete:complete];
+- (void)loadDataWithPath:(NSString *)path parameters:(nullable NSDictionary *)parameters callBack:(void (^)(BOOL success,id _Nullable result))callBack{
+    [self loadDataWithPath:path parameters:parameters constructingBodyWithBlock:nil progress:nil callBack:callBack];
 }
 
-- (void)loadDataWithPath:(NSString *)path parameters:(NSDictionary *)parameters success:(void (^)(BOOL))block {
-    [self loadDataWithPath:path parameters:parameters success:block complete:nil];
-}
-
-- (void)loadDataWithPath:(NSString *)path parameters:(NSDictionary *)parameters success:(void (^)(BOOL success))block complete:(void (^)(id))complete {
+- (void)loadDataWithPath:(NSString *)path parameters:(nullable NSDictionary *)parameters  constructingBodyWithBlock:(nullable void (^)(id<AFMultipartFormData> _Nonnull))block progress:(nullable void (^)(NSProgress * _Nullable))uploadProgress callBack:(nullable void (^)(BOOL success,id _Nullable result))callBack {
     if (path == nil) {
         return;
     }
@@ -57,8 +53,8 @@
     }
     self.parameters = parameters;
     [self resetBeginningState:parameters];
-    self.task = [[LNNetworkManager shareManager] postPath:path parameters:parameters withBlock:^(NSDictionary *result, NSError *error) {
-        [self precessResult:result error:error success:block complete:complete];
+    self.task = [[LNNetworkManager shareManager] requestMethod:self.requestMethod path:path parameters:parameters constructingBodyWithBlock:block progress:uploadProgress result:^(id  _Nullable result, NSError * _Nullable error) {
+        [self analyzeResult:result error:error callBack:callBack];
         [self requestEnd];
         self.requesting = NO;
     }];
@@ -67,7 +63,7 @@
 
 - (void)resetBeginningState:(NSDictionary *)parameters {}
 
-- (void)precessResult:(NSDictionary *)result error:(NSError *)error success:(void (^)(BOOL success))block complete:(void (^)(id))complete{
+- (void)analyzeResult:(id)result error:(NSError *)error callBack:(void (^)(BOOL, id _Nullable))callBack {
     //此类由子类重写,主要是公共信息的处理(包括异常和正常数据)
     if (error) {
         NSLog(@"error:%@",error);
@@ -88,18 +84,15 @@
         if([self.delegate respondsToSelector:@selector(networkRequestRequestError:)]){
             [self.delegate networkRequestRequestError:error];
         }
-        if (block) {
-            block(NO);
+        if (callBack) {
+            callBack(NO,nil);
         }
     }else{
         NSString *code = [result objectForKey:@"code"];
         NSLog(@"%@",code);
         if ([code.lowercaseString isEqualToString:@"success"]) {
             id data = [result objectForKey:@"model"];
-            [self processOriginalData:data complete:complete];
-            if (block) {
-                block(YES);
-            }
+            [self processData:data callBack:callBack];
         }else{
             NSString *message = [result objectForKey:@"message"];
             if (message && message.length) {
@@ -123,8 +116,8 @@
                 NSError *myError = [[NSError alloc] initWithDomain:[LNNetworkManager shareManager].sessionManager.baseURL.absoluteString code:LNNetworkRequestErrorTypeServeBad userInfo:@{NSLocalizedDescriptionKey:message}];
                 [self.delegate networkRequestRequestError:myError];
             }
-            if (block) {
-                block(NO);
+            if (callBack) {
+                callBack(NO,nil);
             }
         }
     }
@@ -144,9 +137,9 @@
     }
 }
 
-- (void)processOriginalData:(id)data complete:(void (^)(id))complete {
-    if (complete) {
-        complete(data);
+- (void)processData:(id)data callBack:(void (^)(BOOL, id _Nullable))callBack {
+    if (callBack) {
+        callBack(YES,data);
     }
     if ([self.delegate respondsToSelector:@selector(networkRequest:data:)]) {
         [self.delegate networkRequest:self data:data];
@@ -193,24 +186,32 @@
 
 #pragma mark - class methods
 
-+ (void)loadDataWithPath:(NSString *)path parameters:(NSDictionary *)parameters success:(void (^)(BOOL))block {
-    [[self class] loadDataWithPath:path parameters:parameters success:block complete:nil];
++ (void)loadDataWithPath:(NSString *)path parameters:(NSDictionary *)parameters success:(nullable void (^)(BOOL))block {
+    [[self class] loadDataWithPath:path parameters:parameters callBack:^(BOOL success, id  _Nullable result) {
+        if (block) {
+            block(success);
+        }
+    }];
 }
 
-+ (void)loadDataWithPath:(NSString *)path parameters:(NSDictionary *)parameters success:(void (^)(BOOL))block complete:(void (^)(id))complete {
-    [[self class] loadDataWithDelegate:nil path:path parameters:parameters success:block complete:complete];
-}
-
-+ (void)loadDataWithDelegate:(id<LNNetworkRequestDelegate>)delegate path:(NSString *)path parameters:(NSDictionary *)parameters success:(void (^)(BOOL))block complete:(void (^)(id))complete {
-    LNNetworkRequest *request = [[[self class] alloc] init];
-    request.delegate = delegate;
-    [request loadDataWithPath:path parameters:parameters success:block complete:complete];
++ (void)loadDataWithPath:(NSString *)path parameters:(NSDictionary *)parameters callBack:(nullable void (^)(BOOL, id _Nullable))callBack {
+    [[self class] loadDataWithDelegate:nil path:path parameters:parameters callBack:callBack];
 }
 
 + (void)loadDataWithDelegate:(id<LNNetworkRequestDelegate>)delegate path:(NSString *)path parameters:(NSDictionary *)parameters {
+    [[self class] loadDataWithDelegate:nil path:path parameters:parameters callBack:nil];
+}
+
++ (void)loadDataWithDelegate:(id <LNNetworkRequestDelegate>)delegate path:(NSString *)path parameters:(NSDictionary *)parameters callBack:(nullable void (^)(BOOL success,id _Nullable result))callBack {
     LNNetworkRequest *request = [[[self class] alloc] init];
     request.delegate = delegate;
-    [request loadDataWithPath:path parameters:parameters success:nil complete:nil];
+    [request loadDataWithPath:path parameters:parameters callBack:callBack];
+}
+
+#pragma mark - Getter Setter
+
+- (LNNetworkRequestMethod)requestMethod {
+    return LNNetworkRequestMethodPost;
 }
 
 

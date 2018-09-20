@@ -7,12 +7,13 @@
 //
 
 #import <Foundation/Foundation.h>
-
+#import "LNNetworkingEnumHeader.h"
+#import <AFNetworking/AFURLRequestSerialization.h>
 /*
  综述:
  LNNetworkRequest 用来主要用来发起请求,监听请求状态,接收请求结果,处理缓存逻辑,初步处理数据.
- 它是OrangeNetwork的核心类之一.
- OrangeNetwork是围绕AFNetworking 3.1.0 来设计.
+ 它是LNNetworking的核心类之一.
+ LNNetworking是围绕AFNetworking 3.1.0 来设计.
  设计目的:
  1.能够达到仅仅一次配置xxx 即可快速发起请求.
  2.重复发生请求时可以选择,是等待上一个请求返回数据后再请求,
@@ -20,17 +21,13 @@
  3.高度解耦
  */
 
-typedef NS_ENUM(NSInteger,LNNetworkRequestMethod) {
-    LNNetworkRequestMethodGet = 0,
-    LNNetworkRequestMethodPost = 1,
-};
-
 typedef NS_ENUM(NSInteger,LNNetworkRequestErrorType) {
     LNNetworkRequestErrorTypeNoNetWork = 0,
     LNNetworkRequestErrorTypeNoData = 1,
     LNNetworkRequestErrorTypeServeBad = 2,
 };
 
+NS_ASSUME_NONNULL_BEGIN
 
 @class LNNetworkRequest;
 @protocol LNNetworkRequestDelegate <NSObject>
@@ -46,8 +43,8 @@ typedef NS_ENUM(NSInteger,LNNetworkRequestErrorType) {
 
 @end
 
-@interface LNNetworkRequest : NSObject
 
+@interface LNNetworkRequest : NSObject
 
 @property (nonatomic, weak) id<LNNetworkRequestDelegate> delegate;
 @property (nonatomic, weak) NSURLSessionDataTask *task;
@@ -58,28 +55,49 @@ typedef NS_ENUM(NSInteger,LNNetworkRequestErrorType) {
 @property (nonatomic, assign) NSInteger currentPage;
 @property (nonatomic, assign) NSInteger totalPage;
 @property (nonatomic, strong) NSString *path;
-@property (nonatomic, assign) LNNetworkRequestMethod requestMethod;//"post","get"
+@property (nonatomic, assign, readonly) LNNetworkRequestMethod requestMethod;//"post","get"
 @property (nonatomic, assign) BOOL requesting;
 @property (nonatomic, assign) BOOL loadedAllData;
 @property (nonatomic, strong) NSDictionary *extraInfomation;//user-defined extra infomation
+@property (nonatomic, strong) id responseData;
 
 
 - (instancetype)initWithDelegate:(id <LNNetworkRequestDelegate>)delegate;
 
 - (void)loadDataWithPath:(NSString *)path;
-- (void)loadDataWithPath:(NSString *)path parameters:(NSDictionary *)parameters;
-- (void)loadDataWithPath:(NSString *)path parameters:(NSDictionary *)parameters complete:(void (^)(id result))complete;
-- (void)loadDataWithPath:(NSString *)path parameters:(NSDictionary *)parameters success:(void (^)(BOOL success))block;
-- (void)loadDataWithPath:(NSString *)path parameters:(NSDictionary *)parameters success:(void (^)(BOOL success))block complete:(void (^)(id result))complete;
+- (void)loadDataWithPath:(NSString *)path parameters:(nullable NSDictionary *)parameters;
+- (void)loadDataWithPath:(NSString *)path parameters:(nullable NSDictionary *)parameters callBack:(nullable void (^)(BOOL success,id _Nullable result))callBack;
+
+- (void)loadDataWithPath:(NSString *)path parameters:(nullable NSDictionary *)parameters  constructingBodyWithBlock:(nullable void (^)(id<AFMultipartFormData> _Nonnull))block progress:(nullable void (^)(NSProgress * _Nullable))uploadProgress callBack:(nullable void (^)(BOOL success,id _Nullable result))callBack;
+
 - (void)setLoadedAllData:(BOOL)loadedAllData;
 
-- (void)precessResult:(NSDictionary *)result error:(NSError *)error success:(void (^)(BOOL success))block complete:(void (^)(id))complete;
-- (void)processOriginalData:(id)data complete:(void (^)(id))complete;
 
-+ (void)loadDataWithPath:(NSString *)path parameters:(NSDictionary *)parameters success:(void (^)(BOOL success))block;
-+ (void)loadDataWithPath:(NSString *)path parameters:(NSDictionary *)parameters success:(void (^)(BOOL success))block complete:(void (^)(id result))complete;
-+ (void)loadDataWithDelegate:(id <LNNetworkRequestDelegate>)delegate path:(NSString *)path parameters:(NSDictionary *)parameters success:(void (^)(BOOL success))block complete:(void (^)(id result))complete;
+/**
+ 此类由子类重写，用于统一数据分析处理。可在此类中，统一处理错误，根据错误执行不同的操作。
+
+ @param result 源数据
+ @param error 错误信息
+ @param callBack 回调
+ */
+- (void)analyzeResult:(nullable id)result error:(nullable NSError *)error callBack:(nullable void (^)(BOOL success, id _Nullable data))callBack;
+
+/**
+ 在函数-analyzeResult:error:callBack:执行到正确结果后，可在此函数中进一步处理数据
+
+ @param data 正确数据
+ @param callBack 回调
+ */
+- (void)processData:(id)data callBack:(nullable void (^)(BOOL success,id _Nullable result))callBack;
+
+
+#pragma mark - 类方法
++ (void)loadDataWithPath:(NSString *)path parameters:(NSDictionary *)parameters success:(nullable void (^)(BOOL success))block;
++ (void)loadDataWithPath:(NSString *)path parameters:(NSDictionary *)parameters callBack:(nullable void (^)(BOOL success,id _Nullable result))callBack;
 + (void)loadDataWithDelegate:(id<LNNetworkRequestDelegate>)delegate path:(NSString *)path parameters:(NSDictionary *)parameters;
++ (void)loadDataWithDelegate:(nullable id <LNNetworkRequestDelegate>)delegate path:(NSString *)path parameters:(NSDictionary *)parameters callBack:(nullable void (^)(BOOL success,id _Nullable result))callBack;
 
 
 @end
+
+NS_ASSUME_NONNULL_END

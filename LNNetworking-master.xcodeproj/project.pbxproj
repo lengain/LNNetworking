@@ -18,6 +18,8 @@
 		331896CB2151F8810057BC08 /* LNNetworkRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 331896CA2151F8810057BC08 /* LNNetworkRequest.m */; };
 		331896CE2151FEE80057BC08 /* LNNetworkManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 331896CD2151FEE80057BC08 /* LNNetworkManager.m */; };
 		331896D1215200940057BC08 /* LNNetworkConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 331896D0215200940057BC08 /* LNNetworkConfiguration.m */; };
+		331896D52152342A0057BC08 /* LNBaseNetworkRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 331896D42152342A0057BC08 /* LNBaseNetworkRequest.m */; };
+		331896D821523D4D0057BC08 /* LNAPIOpenInfomationListRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 331896D721523D4D0057BC08 /* LNAPIOpenInfomationListRequest.m */; };
 		432EA144FD8F6EAC2C3BF46F /* libPods-LNNetworking-masterTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2E41F17717CA27112F8DB8FD /* libPods-LNNetworking-masterTests.a */; };
 		CA78552F1E96B324714D023B /* libPods-LNNetworking-master.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ADE65C500BAD759868A3AA0D /* libPods-LNNetworking-master.a */; };
 		CE22ED95CC444C4A62796E0A /* libPods-LNNetworking-masterUITests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E58F0E7CBF0FCE10E0A96612 /* libPods-LNNetworking-masterUITests.a */; };
@@ -68,6 +70,11 @@
 		331896CD2151FEE80057BC08 /* LNNetworkManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LNNetworkManager.m; sourceTree = "<group>"; };
 		331896CF215200940057BC08 /* LNNetworkConfiguration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LNNetworkConfiguration.h; sourceTree = "<group>"; };
 		331896D0215200940057BC08 /* LNNetworkConfiguration.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LNNetworkConfiguration.m; sourceTree = "<group>"; };
+		331896D32152342A0057BC08 /* LNBaseNetworkRequest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LNBaseNetworkRequest.h; sourceTree = "<group>"; };
+		331896D42152342A0057BC08 /* LNBaseNetworkRequest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LNBaseNetworkRequest.m; sourceTree = "<group>"; };
+		331896D621523D4D0057BC08 /* LNAPIOpenInfomationListRequest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LNAPIOpenInfomationListRequest.h; sourceTree = "<group>"; };
+		331896D721523D4D0057BC08 /* LNAPIOpenInfomationListRequest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LNAPIOpenInfomationListRequest.m; sourceTree = "<group>"; };
+		331896D92153343D0057BC08 /* LNNetworkingEnumHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LNNetworkingEnumHeader.h; sourceTree = "<group>"; };
 		8389E6D45FB4927B173F0D7C /* Pods-LNNetworking-masterTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LNNetworking-masterTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-LNNetworking-masterTests/Pods-LNNetworking-masterTests.debug.xcconfig"; sourceTree = "<group>"; };
 		ADE65C500BAD759868A3AA0D /* libPods-LNNetworking-master.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-LNNetworking-master.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B64ED9B7AF85900F14A4B392 /* Pods-LNNetworking-masterUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LNNetworking-masterUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-LNNetworking-masterUITests/Pods-LNNetworking-masterUITests.release.xcconfig"; sourceTree = "<group>"; };
@@ -138,6 +145,7 @@
 			isa = PBXGroup;
 			children = (
 				331896C82151F0BA0057BC08 /* LNNetworking */,
+				331896D2215233CE0057BC08 /* Business */,
 				331896962151E6970057BC08 /* AppDelegate.h */,
 				331896972151E6970057BC08 /* AppDelegate.m */,
 				331896992151E6970057BC08 /* ViewController.h */,
@@ -178,9 +186,21 @@
 				331896CD2151FEE80057BC08 /* LNNetworkManager.m */,
 				331896CF215200940057BC08 /* LNNetworkConfiguration.h */,
 				331896D0215200940057BC08 /* LNNetworkConfiguration.m */,
+				331896D92153343D0057BC08 /* LNNetworkingEnumHeader.h */,
 			);
 			path = LNNetworking;
 			sourceTree = SOURCE_ROOT;
+		};
+		331896D2215233CE0057BC08 /* Business */ = {
+			isa = PBXGroup;
+			children = (
+				331896D32152342A0057BC08 /* LNBaseNetworkRequest.h */,
+				331896D42152342A0057BC08 /* LNBaseNetworkRequest.m */,
+				331896D621523D4D0057BC08 /* LNAPIOpenInfomationListRequest.h */,
+				331896D721523D4D0057BC08 /* LNAPIOpenInfomationListRequest.m */,
+			);
+			path = Business;
+			sourceTree = "<group>";
 		};
 		DE3F1E4D5E0AD894A3745607 /* Pods */ = {
 			isa = PBXGroup;
@@ -400,6 +420,8 @@
 				3318969B2151E6970057BC08 /* ViewController.m in Sources */,
 				331896A62151E69B0057BC08 /* main.m in Sources */,
 				331896CB2151F8810057BC08 /* LNNetworkRequest.m in Sources */,
+				331896D52152342A0057BC08 /* LNBaseNetworkRequest.m in Sources */,
+				331896D821523D4D0057BC08 /* LNAPIOpenInfomationListRequest.m in Sources */,
 				331896CE2151FEE80057BC08 /* LNNetworkManager.m in Sources */,
 				331896982151E6970057BC08 /* AppDelegate.m in Sources */,
 				331896D1215200940057BC08 /* LNNetworkConfiguration.m in Sources */,

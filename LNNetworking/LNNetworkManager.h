@@ -10,7 +10,7 @@
 #import <AFNetworking/AFHTTPSessionManager.h>
 #import "LNNetworkConfiguration.h"
 #import "LNNetworkRequest.h"
-
+#import "LNNetworkingEnumHeader.h"
 NS_ASSUME_NONNULL_BEGIN
 @class LNNetworkManager;
 
@@ -63,23 +63,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong, readonly) AFHTTPSessionManager *sessionManager;
 
 
-/**
- *  get请求
- *
- *  @param path       url路径
- *  @param parameters 参数
- *  @param block      block
- */
-- (NSURLSessionDataTask *)getPath:(NSString *)path parameters:(NSDictionary *)parameters withBlock:(void (^)(NSDictionary *result, NSError *error))block;
-
-/**
- *  post请求
- *
- *  @param path       url路径
- *  @param parameters 参数
- *  @param block      block
- */
-- (NSURLSessionDataTask *)postPath:(NSString *)path parameters:(NSDictionary *)parameters withBlock:(void (^)(NSDictionary *result, NSError *error))block;
+- (NSURLSessionDataTask *)requestMethod:(LNNetworkRequestMethod)requestMethod path:(NSString *)URLString parameters:(nullable id)parameters constructingBodyWithBlock:(nullable void (^)(id<AFMultipartFormData> _Nonnull))block progress:(nullable void (^)(NSProgress * _Nullable))uploadProgress result:(void (^)(id _Nullable result, NSError * _Nullable error))result;
 
 - (void)cancleRequestWithIdentifier:(NSUInteger)identifier;
 

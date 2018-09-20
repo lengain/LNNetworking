@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <AFNetworking/AFSecurityPolicy.h>
 
+NS_ASSUME_NONNULL_BEGIN
 @interface LNNetworkConfiguration : NSObject
 
 @property (nonatomic, strong) NSURL *baseURL;
@@ -18,3 +19,4 @@
 + (LNNetworkConfiguration *)defaultConfiguration;
 
 @end
+NS_ASSUME_NONNULL_END

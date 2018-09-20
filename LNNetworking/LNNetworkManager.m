@@ -38,57 +38,77 @@
 
 #pragma mark - Request
 
-- (NSURLSessionDataTask *)getPath:(NSString *)path parameters:(NSDictionary *)parameters withBlock:(void (^)(NSDictionary *result, NSError *error))block {
-    NSDictionary *processedDictionary;
-    if (self.interceptor && [self.interceptor respondsToSelector:@selector(manager:processParameters:)]) {
-        processedDictionary = [self.interceptor manager:self processParameters:parameters];
-    }else {
-        processedDictionary = parameters;
-    }
-    return [self.sessionManager GET:path parameters:processedDictionary progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-        NSDictionary *result = nil;
-        if ([responseObject isKindOfClass:[NSDictionary class]]) {
-            result = (NSDictionary *)responseObject;
-        }else if([responseObject isKindOfClass:[NSData class]]){
-            NSData *_data = responseObject;
-            id _json = [NSJSONSerialization JSONObjectWithData:_data options:0 error:nil];
-            result = [NSDictionary dictionaryWithDictionary:_json];
-        }
-        if (block) {
-            block(result,nil);
-        }
-    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        if (block) {
-            block([NSDictionary dictionary],error);
-        }
-    }];
+- (NSURLSessionDataTask *)requestMethod:(LNNetworkRequestMethod)requestMethod path:(NSString *)URLString parameters:(id)parameters constructingBodyWithBlock:(void (^)(id<AFMultipartFormData> _Nonnull))block progress:(void (^)(NSProgress * _Nonnull))uploadProgress success:(void (^)(NSURLSessionDataTask * _Nonnull, id _Nonnull))success failure:(void (^)(NSURLSessionDataTask * _Nonnull, NSError * _Nonnull))failure {
+    return nil;
 }
 
-- (NSURLSessionDataTask *)postPath:(NSString *)path parameters:(NSDictionary *)parameters withBlock:(void (^)(NSDictionary *result, NSError *error))block {
+- (NSURLSessionDataTask *)requestMethod:(LNNetworkRequestMethod)requestMethod path:(NSString *)URLString parameters:(nullable id)parameters constructingBodyWithBlock:(nullable void (^)(id<AFMultipartFormData> _Nonnull))block progress:(nullable void (^)(NSProgress * _Nullable))uploadProgress result:(void (^)(id _Nullable result, NSError * _Nullable error))result {
     NSDictionary *processedDictionary;
     if (self.interceptor && [self.interceptor respondsToSelector:@selector(manager:processParameters:)]) {
         processedDictionary = [self.interceptor manager:self processParameters:parameters];
     }else {
         processedDictionary = parameters;
     }
-    return [self.sessionManager POST:path parameters:processedDictionary progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-        NSDictionary *result = nil;
-        if ([responseObject isKindOfClass:[NSDictionary class]]) {
-            result = (NSDictionary *)responseObject;
-        }else if([responseObject isKindOfClass:[NSData class]]){
-            NSData *_data = responseObject;
-            id _json = [NSJSONSerialization JSONObjectWithData:_data options:0 error:nil];
-            result = [NSDictionary dictionaryWithDictionary:_json];
+    void (^success)(NSURLSessionDataTask * _Nonnull, id _Nonnull) = ^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+        if (result) {
+            if ([responseObject isKindOfClass:[NSDictionary class]]) {
+                result(responseObject,nil);
+            }else if([responseObject isKindOfClass:[NSData class]]){
+                NSData *sourceData = (NSData *)responseObject;
+                id jsonData = [NSJSONSerialization JSONObjectWithData:sourceData options:0 error:nil];
+                if (jsonData && [jsonData isKindOfClass:[NSDictionary class]]) {
+                    result(jsonData,nil);
+                }else {
+                    result(responseObject,nil);
+                }
+            }else {
+                result(responseObject,nil);
+            }
         }
-        if (block) {
-            block(result,nil);
+    };
+    void (^failure)(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) = ^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        if (result) {
+            result(nil,error);
         }
-    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        if (block) {
-            block([NSDictionary dictionary],error);
-        }
-    }];
+    };
+    
+    switch (requestMethod) {
+            case LNNetworkRequestMethodPost:{
+                if (block != nil) {
+                    return [self.sessionManager POST:URLString parameters:processedDictionary constructingBodyWithBlock:block progress:uploadProgress success:success failure:failure];
+                }else {
+                    return [self.sessionManager POST:URLString parameters:processedDictionary progress:uploadProgress success:success failure:failure];
+                }
+            }
+            break;
+            case LNNetworkRequestMethodGet: {
+                return [self.sessionManager GET:URLString parameters:processedDictionary progress:uploadProgress success:success failure:failure];
+            }
+            case LNNetworkRequestMethodHead: {
+                return [self.sessionManager HEAD:URLString parameters:processedDictionary success:^(NSURLSessionDataTask * _Nonnull task) {
+                    result([[NSNumber alloc] initWithBool:YES],nil);
+                } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+                    result([[NSNumber alloc] initWithBool:NO],error);
+                }];
+            }
+            break;
+            case LNNetworkRequestMethodPut: {
+                return [self.sessionManager PUT:URLString parameters:processedDictionary success:success failure:failure];
+            }
+            break;
+            case LNNetworkRequestMethodPatch: {
+                return [self.sessionManager PATCH:URLString parameters:processedDictionary success:success failure:failure];
+            }
+            break;
+            case LNNetworkRequestMethodDelete: {
+                return [self.sessionManager DELETE:URLString parameters:processedDictionary success:success failure:failure];
+            }
+        default:
+            return nil;
+            break;
+    }
 }
+
 
 #pragma mark - Methos
 

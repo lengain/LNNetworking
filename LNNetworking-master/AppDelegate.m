@@ -7,8 +7,8 @@
 //
 
 #import "AppDelegate.h"
-
-@interface AppDelegate ()
+#import "LNNetworkManager.h"
+@interface AppDelegate ()<LNNetworkManagerInterceptor>
 
 @end
 
@@ -17,8 +17,16 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
-    
-    
+    //network global
+    //测试接口列表 https://blog.csdn.net/rosener/article/details/81699698
+    LNNetworkConfiguration *configuration = [[LNNetworkConfiguration alloc] init];
+    configuration.baseURL = [NSURL URLWithString:@"https://www.apiopen.top/"];
+    configuration.securityPolicy = [AFSecurityPolicy defaultPolicy];
+    /*
+    configuration.securityPolicy = [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeCertificate withPinnedCertificates:[AFSecurityPolicy certificatesInBundle:[NSBundle mainBundle]]];
+     */
+    [[LNNetworkManager shareManager] configureNetworkManager:configuration];
+    [LNNetworkManager shareManager].interceptor = self;
     return YES;
 }
 
@@ -49,5 +57,10 @@
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
 
+#pragma mark - LNNetworkManagerInterceptor
+
+- (NSDictionary *)manager:(LNNetworkManager *)manager processParameters:(NSDictionary *)parameters {
+    return parameters;
+}
 
 @end
