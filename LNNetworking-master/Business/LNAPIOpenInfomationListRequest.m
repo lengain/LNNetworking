@@ -21,4 +21,12 @@
     }];
 }
 
+- (BOOL)shouldCache {
+    return YES;
+}
+
+- (NSTimeInterval)expiryInverval {
+    return 60;
+}
+
 @end

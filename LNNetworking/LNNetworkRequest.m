@@ -53,15 +53,35 @@
     }
     self.parameters = parameters;
     [self resetBeginningState:parameters];
+    //缓存判断
+    if (self.shouldCache) {
+        LNNetworkCacheItem *item = [[[LNNetworkManager shareManager] cache] itemFromCacheWithKey:self.absoluteURLString];
+        if (item != nil) {
+            [self analyzeResult:item.data error:nil callBack:callBack];
+            [self requestEnd];
+            return;
+        }
+    }
+    //请求
     self.task = [[LNNetworkManager shareManager] requestMethod:self.requestMethod path:path parameters:parameters constructingBodyWithBlock:block progress:uploadProgress result:^(id  _Nullable result, NSError * _Nullable error) {
+        //请求成功再判断是否需要缓存，请求失败则不缓存。
+        if (result != nil) {
+            [self networkCache:result];
+        }
         [self analyzeResult:result error:error callBack:callBack];
         [self requestEnd];
-        self.requesting = NO;
     }];
     self.requestIdentifier = self.task.taskIdentifier;
 }
 
 - (void)resetBeginningState:(NSDictionary *)parameters {}
+
+- (void)networkCache:(id)result {
+    if (self.shouldCache) {
+        LNNetworkCacheItem *item = [[LNNetworkCacheItem alloc] initWithData:result validTime:self.expiryInverval];
+        [[LNNetworkManager shareManager].cache storeNetworkCacheItem:item forKey:self.absoluteURLString];
+    }
+}
 
 - (void)analyzeResult:(id)result error:(NSError *)error callBack:(void (^)(BOOL, id _Nullable))callBack {
     //此类由子类重写,主要是公共信息的处理(包括异常和正常数据)
@@ -127,8 +147,8 @@
     [self removeCurrentRequest];
     if (self.delegate && [self.delegate respondsToSelector:@selector(networkRequest:requestEndAllCompleted:)]) {
         [self.delegate networkRequest:self requestEndAllCompleted:self.loadedAllData];
-        self.requesting = NO;
     }
+    self.requesting = NO;
 }
 
 - (void)removeCurrentRequest {
@@ -214,5 +234,13 @@
     return LNNetworkRequestMethodPost;
 }
 
+
+- (BOOL)shouldCache {
+    return NO;
+}
+
+- (NSTimeInterval)expiryInverval {
+    return 180;
+}
 
 @end

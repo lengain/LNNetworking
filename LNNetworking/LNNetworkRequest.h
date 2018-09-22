@@ -55,11 +55,26 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) NSInteger currentPage;
 @property (nonatomic, assign) NSInteger totalPage;
 @property (nonatomic, strong) NSString *path;
-@property (nonatomic, assign, readonly) LNNetworkRequestMethod requestMethod;//"post","get"
 @property (nonatomic, assign) BOOL requesting;
 @property (nonatomic, assign) BOOL loadedAllData;
 @property (nonatomic, strong) NSDictionary *extraInfomation;//user-defined extra infomation
 @property (nonatomic, strong) id responseData;
+
+/***配置信息****/
+/**
+ 请求方式 默认post
+ */
+@property (nonatomic, assign, readonly) LNNetworkRequestMethod requestMethod;//"post","get"
+
+/**
+ 是否使用缓存。默认NO
+ */
+@property (nonatomic, assign, readonly) BOOL shouldCache;//"post","get"
+
+/**
+ 缓存保留时长，默认180秒
+ */
+@property (nonatomic, assign, readonly) NSTimeInterval expiryInverval;
 
 
 - (instancetype)initWithDelegate:(id <LNNetworkRequestDelegate>)delegate;
@@ -91,7 +106,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)processData:(id)data callBack:(nullable void (^)(BOOL success,id _Nullable result))callBack;
 
 
-#pragma mark - 类方法
+#pragma mark - class methods
+
 + (void)loadDataWithPath:(NSString *)path parameters:(NSDictionary *)parameters success:(nullable void (^)(BOOL success))block;
 + (void)loadDataWithPath:(NSString *)path parameters:(NSDictionary *)parameters callBack:(nullable void (^)(BOOL success,id _Nullable result))callBack;
 + (void)loadDataWithDelegate:(id<LNNetworkRequestDelegate>)delegate path:(NSString *)path parameters:(NSDictionary *)parameters;

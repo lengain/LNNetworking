@@ -8,6 +8,8 @@
 
 #import "LNNetworkManager.h"
 
+#import <Objc/runtime.h>
+
 @interface LNNetworkManager()
 
 @property (nonatomic, strong, readwrite) AFHTTPSessionManager *sessionManager;
@@ -144,4 +146,19 @@
     return _sessionManager;
 }
 
+- (void)setCache:(LNNetworkCache *)cache {
+    objc_setAssociatedObject(self, @selector(cache), cache, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (LNNetworkCache *)cache {
+    LNNetworkCache *cache = objc_getAssociatedObject(self, _cmd);
+    if (!cache) {
+        cache = [[LNNetworkCache alloc] init];
+        [self setCache:cache];
+    }
+    return cache;
+}
+
 @end
+
+

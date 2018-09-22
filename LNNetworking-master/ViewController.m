@@ -48,7 +48,9 @@ static NSString *UITableViewCellReuseId = @"ViewController.UITableViewCell";
     switch (indexPath.row) {
             case 0:{
                 [LNAPIOpenInfomationListRequest requestInfomationListCallBack:^(BOOL success, id _Nullable result) {
-                    NSLog(@"LNAPIOpenInfomationListRequest:\n %@",result);
+                    if (result) {
+                        NSLog(@"LNAPIOpenInfomationListRequest:请求成功");
+                    }
                 }];
             }
             break;

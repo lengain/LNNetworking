@@ -11,6 +11,8 @@
 #import "LNNetworkConfiguration.h"
 #import "LNNetworkRequest.h"
 #import "LNNetworkingEnumHeader.h"
+#import "LNNetworkCache.h"
+
 NS_ASSUME_NONNULL_BEGIN
 @class LNNetworkManager;
 
@@ -68,5 +70,12 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)cancleRequestWithIdentifier:(NSUInteger)identifier;
 
 @end
+
+@interface LNNetworkManager (ManageCache)
+
+@property (nonatomic, strong) LNNetworkCache *cache;
+
+@end
+
 
 NS_ASSUME_NONNULL_END
