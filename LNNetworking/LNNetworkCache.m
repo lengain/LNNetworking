@@ -47,31 +47,11 @@
 
 @end
 
-@interface LNAutoPurgeCache : NSCache
-@end
-
-@implementation LNAutoPurgeCache
-
-- (id)init {
-    self = [super init];
-    if (self) {
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(removeAllObjects) name:UIApplicationDidReceiveMemoryWarningNotification object:nil];
-    }
-    return self;
-}
-
-- (void)dealloc {
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidReceiveMemoryWarningNotification object:nil];
-}
-
-@end
-
 
 static const NSInteger kDefaultCacheMaxCacheAge = 60; // 1 minute
 
 @interface LNNetworkCache ()
 
-@property (nonatomic, strong) LNAutoPurgeCache *memoryCache;
 @property (nonatomic, strong) NSString *diskCachePath;
 @property (nonatomic, strong) NSMutableArray *customPaths;
 @property (nonatomic, strong) dispatch_queue_t ioQueue;
@@ -83,7 +63,7 @@ static const NSInteger kDefaultCacheMaxCacheAge = 60; // 1 minute
 @implementation LNNetworkCache
 
 - (id)init {
-    return [self initWithNamespace:@"default"];
+    return [self initWithNamespace:@"DefaultCache"];
 }
 
 - (id)initWithNamespace:(NSString *)ns {
@@ -101,10 +81,6 @@ static const NSInteger kDefaultCacheMaxCacheAge = 60; // 1 minute
         // Init default values
         _maxCacheAge = kDefaultCacheMaxCacheAge;
         
-        // Init the memory cache
-        _memoryCache = [[LNAutoPurgeCache alloc] init];
-        _memoryCache.name = fullNamespace;
-        
         // Init the disk cache
         if (directory != nil) {
             _diskCachePath = [directory stringByAppendingPathComponent:fullNamespace];
@@ -113,33 +89,9 @@ static const NSInteger kDefaultCacheMaxCacheAge = 60; // 1 minute
             _diskCachePath = path;
         }
         
-//        // memory cache enabled
-//        _shouldCacheImagesInMemory = YES;
-//
-//        // Disable iCloud
-//        _shouldDisableiCloud = YES;
-        
         dispatch_sync(_ioQueue, ^{
             self.fileManager = [NSFileManager new];
         });
-        
-#if TARGET_OS_IOS
-        // Subscribe to app events
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(clearMemory)
-                                                     name:UIApplicationDidReceiveMemoryWarningNotification
-                                                   object:nil];
-        
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(cleanDisk)
-                                                     name:UIApplicationWillTerminateNotification
-                                                   object:nil];
-        
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(backgroundCleanDisk)
-                                                     name:UIApplicationDidEnterBackgroundNotification
-                                                   object:nil];
-#endif
     }
     
     return self;
@@ -148,16 +100,12 @@ static const NSInteger kDefaultCacheMaxCacheAge = 60; // 1 minute
 #pragma mark ImageCache
 
 - (void)deleteCacheWithKey:(NSString *)key {
-    [self.memoryCache removeObjectForKey:key];
     NSString *cachePathForKey = [self defaultCachePathForKey:key];
     [self.fileManager removeItemAtPath:cachePathForKey error:nil];
 }
 
 - (LNNetworkCacheItem *)itemFromCacheWithKey:(NSString *)key {
-    LNNetworkCacheItem *item = [self itemFromMemoryCacheForKey:key];
-    if (!item) {
-        item = [self itemFromDiskCacheForKey:key];
-    }
+    LNNetworkCacheItem *item = [self itemFromDiskCacheForKey:key];
     if (item != nil) {
         NSTimeInterval cacheTimeLength = [[NSDate date] timeIntervalSince1970] - item.cacheCreateTime;
         if (cacheTimeLength > 0 && cacheTimeLength < item.validTime) {
@@ -170,47 +118,24 @@ static const NSInteger kDefaultCacheMaxCacheAge = 60; // 1 minute
     return item;
 }
 
-- (LNNetworkCacheItem *)itemFromMemoryCacheForKey:(NSString *)key {
-    return [self.memoryCache objectForKey:key];
-}
-
 - (LNNetworkCacheItem *)itemFromDiskCacheForKey:(NSString *)key {
-    // First check the in-memory cache...
-    LNNetworkCacheItem *item = [self itemFromMemoryCacheForKey:key];
-    if (item) {
-        return item;
-    }
-    // Second check the disk cache...
+    //check the disk cache...
     NSString *cachePathForKey = [self defaultCachePathForKey:key];
     LNNetworkCacheItem *diskItem = [NSKeyedUnarchiver unarchiveObjectWithFile:cachePathForKey];
-    if (diskItem) {
-        [self.memoryCache setObject:diskItem forKey:key];
-    }
     return diskItem;
 }
 
 - (void)storeNetworkCacheItem:(LNNetworkCacheItem *)item forKey:(NSString *)key {
-    [self storeNetworkCacheItem:item forKey:key toDisk:YES];
+    dispatch_async(self.ioQueue, ^{
+        if (![self.fileManager fileExistsAtPath:self.diskCachePath]) {
+            [self.fileManager createDirectoryAtPath:self.diskCachePath withIntermediateDirectories:YES attributes:nil error:NULL];
+        }
+        // get cache Path for key
+        NSString *cachePathForKey = [self defaultCachePathForKey:key];
+        // transform to NSUrl
+        [NSKeyedArchiver archiveRootObject:item toFile:cachePathForKey];
+    });
 }
-
-- (void)storeNetworkCacheItem:(LNNetworkCacheItem *)item forKey:(NSString *)key toDisk:(BOOL)toDisk {
-    if (!item || !key) {
-        return;
-    }
-    [self.memoryCache setObject:item forKey:key];
-    if (toDisk) {
-        dispatch_async(self.ioQueue, ^{
-            if (![self.fileManager fileExistsAtPath:self.diskCachePath]) {
-                [self.fileManager createDirectoryAtPath:self.diskCachePath withIntermediateDirectories:YES attributes:nil error:NULL];
-            }
-            // get cache Path for key
-            NSString *cachePathForKey = [self defaultCachePathForKey:key];
-            // transform to NSUrl
-            [NSKeyedArchiver archiveRootObject:item toFile:cachePathForKey];
-        });
-    }
-}
-
 
 - (NSString *)cachePathForKey:(NSString *)key inPath:(NSString *)path {
     NSString *filename = [self cachedFileNameForKey:key];
@@ -230,7 +155,7 @@ static const NSInteger kDefaultCacheMaxCacheAge = 60; // 1 minute
     CC_MD5(str, (CC_LONG)strlen(str), r);
     NSString *filename = [NSString stringWithFormat:@"%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%@",
                           r[0], r[1], r[2], r[3], r[4], r[5], r[6], r[7], r[8], r[9], r[10],
-                          r[11], r[12], r[13], r[14], r[15], [[key pathExtension] isEqualToString:@""] ? @"" : [NSString stringWithFormat:@".%@", [key pathExtension]]];
+                          r[11], r[12], r[13], r[14], r[15],@".reponsedata"];
     
     return filename;
 }
@@ -241,19 +166,69 @@ static const NSInteger kDefaultCacheMaxCacheAge = 60; // 1 minute
     return [paths[0] stringByAppendingPathComponent:fullNamespace];
 }
 
+- (void)cleanCache {
+    [self cleanCacheWithCompletionBlock:nil];
+}
+
+- (void)cleanCacheWithCompletionBlock:(dispatch_block_t)completionBlock {
+    dispatch_async(self.ioQueue, ^{
+        NSURL *diskCacheURL = [NSURL fileURLWithPath:self.diskCachePath isDirectory:YES];
+        NSArray *resourceKeys = @[NSURLIsDirectoryKey, NSURLContentModificationDateKey, NSURLTotalFileAllocatedSizeKey];
+        //枚举器预取有用的条目
+        NSDirectoryEnumerator *fileEnumerator = [self.fileManager enumeratorAtURL:diskCacheURL
+                                                   includingPropertiesForKeys:resourceKeys
+                                                                      options:NSDirectoryEnumerationSkipsHiddenFiles
+                                                                 errorHandler:NULL];
+        // 枚举在缓存字典里的所有file，这个循环有两个目的：1.移除过期文件 2.存储基于大小的清理过程的文件属性
+        // Enumerate all of the files in the cache directory.  This loop has two purposes:
+        //
+        //  1. Removing files that are older than the expiration date.
+        //  2. Storing file attributes for the size-based cleanup pass.
+        for (NSURL *fileURL in fileEnumerator) {
+            NSDictionary *resourceValues = [fileURL resourceValuesForKeys:resourceKeys error:NULL];
+            
+            // Skip directories.
+            if ([resourceValues[NSURLIsDirectoryKey] boolValue]) {
+                continue;
+            }
+            [self.fileManager removeItemAtURL:fileURL error:nil];
+
+        }
+        if (completionBlock) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                completionBlock();
+            });
+        }
+    });
+}
+
+- (void)cacheSizeWithCompletionBlock:(void (^)(NSUInteger fileCount, NSUInteger totalSize))completionBlock {
+    NSURL *diskCacheURL = [NSURL fileURLWithPath:self.diskCachePath isDirectory:YES];
+    
+    dispatch_async(self.ioQueue, ^{
+        NSUInteger fileCount = 0;
+        NSUInteger totalSize = 0;
+        
+        NSDirectoryEnumerator *fileEnumerator = [self.fileManager enumeratorAtURL:diskCacheURL
+                                                   includingPropertiesForKeys:@[NSFileSize]
+                                                                      options:NSDirectoryEnumerationSkipsHiddenFiles
+                                                                 errorHandler:NULL];
+        for (NSURL *fileURL in fileEnumerator) {
+            NSNumber *fileSize;
+            [fileURL getResourceValue:&fileSize forKey:NSURLFileSizeKey error:NULL];
+            totalSize += [fileSize unsignedIntegerValue];
+            fileCount += 1;
+        }
+        
+        if (completionBlock) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                completionBlock(fileCount, totalSize);
+            });
+        }
+    });
+}
+
 #pragma mark - private method
-
-- (void)clearMemory {
-    [self.memoryCache removeAllObjects];
-}
-
-- (void)cleanDisk {
-    
-}
-
-- (void)backgroundCleanDisk {
-    
-}
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
