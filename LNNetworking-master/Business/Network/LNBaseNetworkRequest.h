@@ -6,7 +6,7 @@
 //  Copyright © 2018年 LN. All rights reserved.
 //
 
-#import "LNNetworkRequest.h"
+#import "LNNetworking.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

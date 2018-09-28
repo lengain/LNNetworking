@@ -53,7 +53,7 @@
     }
     self.parameters = parameters;
     [self resetBeginningState:parameters];
-    //缓存判断
+    //cache manage;缓存判断
     if (self.shouldCache) {
         LNNetworkCacheItem *item = [[[LNNetworkManager shareManager] cache] itemFromCacheWithKey:self.absoluteURLString];
         if (item != nil) {
@@ -62,7 +62,7 @@
             return;
         }
     }
-    //请求
+    //request;请求
     self.task = [[LNNetworkManager shareManager] requestMethod:self.requestMethod path:path parameters:parameters constructingBodyWithBlock:block progress:uploadProgress result:^(id  _Nullable result, NSError * _Nullable error) {
         //请求成功再判断是否需要缓存，请求失败则不缓存。
         if (result != nil) {
@@ -87,7 +87,6 @@
     //此类由子类重写,主要是公共信息的处理(包括异常和正常数据)
     if (error) {
         NSLog(@"error:%@",error);
-        //        if (self.showErrorMessage) {
         NSString *LocalizedDescription = [error.userInfo objectForKey:@"NSLocalizedDescription"];
         if (LocalizedDescription && LocalizedDescription.length) {
             NSLog(@"NSLocalizedDescription:%@",LocalizedDescription);
@@ -99,7 +98,6 @@
                 NSLog(@"无网络连接");
             }
         }
-        //        }
         //判断,无网络,访问超时等
         if([self.delegate respondsToSelector:@selector(networkRequestRequestError:)]){
             [self.delegate networkRequestRequestError:error];
@@ -219,7 +217,7 @@
 }
 
 + (void)loadDataWithDelegate:(id<LNNetworkRequestDelegate>)delegate path:(NSString *)path parameters:(NSDictionary *)parameters {
-    [[self class] loadDataWithDelegate:nil path:path parameters:parameters callBack:nil];
+    [[self class] loadDataWithDelegate:delegate path:path parameters:parameters callBack:nil];
 }
 
 + (void)loadDataWithDelegate:(id <LNNetworkRequestDelegate>)delegate path:(NSString *)path parameters:(NSDictionary *)parameters callBack:(nullable void (^)(BOOL success,id _Nullable result))callBack {
@@ -233,7 +231,6 @@
 - (LNNetworkRequestMethod)requestMethod {
     return LNNetworkRequestMethodPost;
 }
-
 
 - (BOOL)shouldCache {
     return NO;

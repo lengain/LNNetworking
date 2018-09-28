@@ -7,13 +7,19 @@
 //
 
 #import "LNBaseNetworkRequest.h"
-
 NS_ASSUME_NONNULL_BEGIN
 
 @interface LNAPIOpenInfomationListRequest : LNBaseNetworkRequest
 
 + (void)requestInfomationListCallBack:(nullable void (^)(BOOL success,id _Nullable result))callBack;
 + (void)requestInfomationListComplete:(void (^)(id result))complete;
+
+@end
+
+@interface LNAPIOpenInfomationModelListRequest : LNBaseNetworkRequest
+
++ (void)requestInfomationListWithDelegate:(id<LNNetworkRequestDelegate>)delegate parameters:(NSDictionary *)parameters;
+
 
 @end
 

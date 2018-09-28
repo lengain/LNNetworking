@@ -30,3 +30,18 @@
 }
 
 @end
+
+#import "LNOpenInfomationItemModel.h"
+
+@implementation LNAPIOpenInfomationModelListRequest
+
++ (void)requestInfomationListWithDelegate:(id<LNNetworkRequestDelegate>)delegate parameters:(NSDictionary *)parameters {
+    [LNAPIOpenInfomationModelListRequest loadDataWithDelegate:delegate path:@"/satinGodApi" parameters:parameters];
+}
+
+- (void)processData:(id)data callBack:(void (^)(BOOL, id _Nullable))callBack {
+    NSArray *dataArray = [NSArray yy_modelArrayWithClass:[LNOpenInfomationItemModel class] json:data];
+    [super processData:dataArray callBack:callBack];
+}
+
+@end

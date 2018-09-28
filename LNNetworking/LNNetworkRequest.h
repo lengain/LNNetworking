@@ -13,12 +13,13 @@
  综述:
  LNNetworkRequest 用来主要用来发起请求,监听请求状态,接收请求结果,处理缓存逻辑,初步处理数据.
  它是LNNetworking的核心类之一.
- LNNetworking是围绕AFNetworking 3.1.0 来设计.
+ LNNetworking是围绕AFNetworking 3.2.1 来设计.
  设计目的:
  1.能够达到仅仅一次配置xxx 即可快速发起请求.
- 2.重复发生请求时可以选择,是等待上一个请求返回数据后再请求,
- 还是取消正在发送的请求直接请求.
- 3.高度解耦
+ 2.支持Get Post Post(上传数据) Head Put Patch Delete
+ 3.支持缓存,可配置过期时间等
+ 4.支持Delegate,Block两种回调策略,可自由配置
+ 5.支持返回数据为模型转换后的对象
  */
 
 typedef NS_ENUM(NSInteger,LNNetworkRequestErrorType) {
@@ -62,17 +63,17 @@ NS_ASSUME_NONNULL_BEGIN
 
 /***配置信息****/
 /**
- 请求方式 默认post
+ Request method,default is post; 请求方式 默认post
  */
-@property (nonatomic, assign, readonly) LNNetworkRequestMethod requestMethod;//"post","get"
+@property (nonatomic, assign, readonly) LNNetworkRequestMethod requestMethod;
 
 /**
- 是否使用缓存。默认NO
+ Is should cache, default is NO;是否使用缓存。默认NO
  */
 @property (nonatomic, assign, readonly) BOOL shouldCache;//"post","get"
 
 /**
- 缓存保留时长，默认180秒
+ cache time,default is 180 seconds ; 缓存保留时长，默认180秒
  */
 @property (nonatomic, assign, readonly) NSTimeInterval expiryInverval;
 
@@ -100,7 +101,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  在函数-analyzeResult:error:callBack:执行到正确结果后，可在此函数中进一步处理数据
 
- @param data 正确数据
+ @param data 数据
  @param callBack 回调
  */
 - (void)processData:(id)data callBack:(nullable void (^)(BOOL success,id _Nullable result))callBack;

@@ -8,6 +8,8 @@
 
 #import "ViewController.h"
 #import "LNAPIOpenInfomationListRequest.h"
+#import "LNTableHeaderView.h"
+#import "LNRequestDelegateViewController.h"
 @interface ViewController ()
 
 @property (nonatomic, strong) NSArray *titleArray;
@@ -17,14 +19,18 @@
 @implementation ViewController
 
 static NSString *UITableViewCellReuseId = @"ViewController.UITableViewCell";
+static NSString *LNTableHeaderViewReuseId = @"ViewController.LNTableHeaderView";
 
 - (NSArray *)titleArray {
-    return @[@"常规请求"];
+    return @[@"Normal Request",
+             @"Delegate",
+             ];
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
+    [self.tableView registerClass:[LNTableHeaderView class] forHeaderFooterViewReuseIdentifier:LNTableHeaderViewReuseId];
     [self.tableView reloadData];
 }
 
@@ -32,6 +38,15 @@ static NSString *UITableViewCellReuseId = @"ViewController.UITableViewCell";
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     return self.titleArray.count;
+}
+
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
+    LNTableHeaderView *header = [tableView dequeueReusableHeaderFooterViewWithIdentifier:LNTableHeaderViewReuseId];
+    return header;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
+    return 44.f;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -55,7 +70,9 @@ static NSString *UITableViewCellReuseId = @"ViewController.UITableViewCell";
             }
             break;
             case 1:{
-                
+                LNRequestDelegateViewController *delegateViewControler = [[LNRequestDelegateViewController alloc] init];
+                delegateViewControler.title = @"Delegate";
+                [self.navigationController pushViewController:delegateViewControler animated:YES];
             }
             break;
             case 2:{

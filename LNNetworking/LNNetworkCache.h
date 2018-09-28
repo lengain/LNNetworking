@@ -34,9 +34,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (assign, nonatomic) NSInteger maxCacheAge;
 
-@property (assign, nonatomic) NSUInteger maxCacheSize;
-
-
 /**
  Get the cache item(LNNetworkCacheItem) with key;根据key获取缓存文件
 
@@ -54,7 +51,7 @@ NS_ASSUME_NONNULL_BEGIN
 
  @param completionBlock 回调
  */
-- (void)cleanCacheWithCompletionBlock:(dispatch_block_t)completionBlock;
+- (void)cleanCacheWithCompletionBlock:(nullable dispatch_block_t)completionBlock;
 
 /**
  calculate cache file count and size;计算缓存文件数量和大小

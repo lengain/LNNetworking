@@ -57,7 +57,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong, readonly) NSMutableArray <LNNetworkRequest *> *requestArray;
 
 /**
- 加载配置,sessionManager会在加载配置时初始化
+ Configure network manager;加载配置,sessionManager会在加载配置时初始化
  @param configuration 配置类
  */
 - (void)configureNetworkManager:(LNNetworkConfiguration *)configuration;
@@ -73,6 +73,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface LNNetworkManager (ManageCache)
 
+/**
+ Cache Manager;缓存管理类
+ */
 @property (nonatomic, strong) LNNetworkCache *cache;
 
 @end

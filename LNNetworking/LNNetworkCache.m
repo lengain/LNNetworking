@@ -170,7 +170,7 @@ static const NSInteger kDefaultCacheMaxCacheAge = 60; // 1 minute
     [self cleanCacheWithCompletionBlock:nil];
 }
 
-- (void)cleanCacheWithCompletionBlock:(dispatch_block_t)completionBlock {
+- (void)cleanCacheWithCompletionBlock:(nullable dispatch_block_t)completionBlock {
     dispatch_async(self.ioQueue, ^{
         NSURL *diskCacheURL = [NSURL fileURLWithPath:self.diskCachePath isDirectory:YES];
         NSArray *resourceKeys = @[NSURLIsDirectoryKey, NSURLContentModificationDateKey, NSURLTotalFileAllocatedSizeKey];
