@@ -195,7 +195,7 @@
 }
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"%@,requestIdentifier:%ld,absoluteURLString:%@",[super description],self.requestIdentifier,self.absoluteURLString];
+    return [NSString stringWithFormat:@"%@,requestIdentifier:%lu,absoluteURLString:%@",[super description],(unsigned long)self.requestIdentifier,self.absoluteURLString];
 }
 
 - (void)dealloc {

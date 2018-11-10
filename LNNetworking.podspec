@@ -22,9 +22,14 @@ Pod::Spec.new do |s|
   #   * Write the description between the DESC delimiters below.
   #   * Finally, don't worry about the indent, CocoaPods strips it!
   s.description  = <<-DESC
+                    LNNetworking基于AFNetworking3.x,主要用来发起请求,监听请求状态,接收请求结果,处理缓存逻辑,初步处理数据,功能点有:
+支持Get Post Post(上传数据) Head Put Patch Delete
+支持缓存,可配置过期时间等
+支持Delegate,Block两种回调策略,可自由配置
+支持返回数据为模型转换后的对象
                    DESC
 
-  s.homepage     = "http://EXAMPLE/LNNetworking"
+  s.homepage     = "https://github.com/lengain/LNNetworking"
   # s.screenshots  = "www.example.com/screenshots_1.gif", "www.example.com/screenshots_2.gif"
   s.license      = { :type => 'MIT', :file => 'LICENSE' }
   # s.license      = { :type => "MIT", :file => "FILE_LICENSE" }
@@ -42,7 +47,7 @@ Pod::Spec.new do |s|
   s.author             = { "lengain" => "lengain@qq.com" }
   # Or just: s.author    = "lengain"
   # s.authors            = { "lengain" => "xunzhaoyulong@163.com" }
-  # s.social_media_url   = "http://twitter.com/lengain"
+  s.social_media_url   = "https://github.com/lengain" # 个人主页
 
   # ――― Platform Specifics ――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
   #
