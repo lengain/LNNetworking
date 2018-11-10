@@ -1,7 +1,10 @@
 #
 #  Be sure to run `pod spec lint LNNetworking.podspec' to ensure this is a
 #  valid spec and to remove all comments including this before submitting the spec.
-#
+#  run `pod cache clean LNNetworking` or `pod cache clean --all`
+#  run `pod lib lint LNNetworking.podspec --allow-warnings` can ignore the warnings
+#  run `pod repo push lengain LNNetworking.podspec` to LNSpecs
+
 
 Pod::Spec.new do |s|
 
@@ -12,7 +15,7 @@ Pod::Spec.new do |s|
   #  summary should be tweet-length, and the description more in depth.
   #
 
-  s.name         = "LNNetworking"
+  s.name         = "LNNetwork"
   s.version      = "0.0.1"
   s.summary      = "iOS Networking based on AFNetworking"
 
