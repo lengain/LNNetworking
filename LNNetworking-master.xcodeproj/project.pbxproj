@@ -14,6 +14,7 @@
 		3302CF0B215D064F0077AA98 /* LNRequestDelegateViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3302CF0A215D064F0077AA98 /* LNRequestDelegateViewController.m */; };
 		3302CF11215DC3D00077AA98 /* LNBaseNetworkRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3302CF0D215DC3D00077AA98 /* LNBaseNetworkRequest.m */; };
 		3302CF12215DC3D00077AA98 /* LNAPIOpenInfomationListRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3302CF10215DC3D00077AA98 /* LNAPIOpenInfomationListRequest.m */; };
+		3315B27F219D57390072E698 /* LNAPICacheRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3315B27E219D57390072E698 /* LNAPICacheRequest.m */; };
 		331896982151E6970057BC08 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 331896972151E6970057BC08 /* AppDelegate.m */; };
 		3318969B2151E6970057BC08 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3318969A2151E6970057BC08 /* ViewController.m */; };
 		3318969E2151E6970057BC08 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3318969C2151E6970057BC08 /* Main.storyboard */; };
@@ -68,6 +69,8 @@
 		3302CF0E215DC3D00077AA98 /* LNAPIOpenInfomationListRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LNAPIOpenInfomationListRequest.h; sourceTree = "<group>"; };
 		3302CF0F215DC3D00077AA98 /* LNBaseNetworkRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LNBaseNetworkRequest.h; sourceTree = "<group>"; };
 		3302CF10215DC3D00077AA98 /* LNAPIOpenInfomationListRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LNAPIOpenInfomationListRequest.m; sourceTree = "<group>"; };
+		3315B27D219D57390072E698 /* LNAPICacheRequest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LNAPICacheRequest.h; sourceTree = "<group>"; };
+		3315B27E219D57390072E698 /* LNAPICacheRequest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LNAPICacheRequest.m; sourceTree = "<group>"; };
 		331896932151E6970057BC08 /* LNNetworking-master.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "LNNetworking-master.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		331896962151E6970057BC08 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		331896972151E6970057BC08 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -158,6 +161,8 @@
 		3302CF0C215DC3D00077AA98 /* Network */ = {
 			isa = PBXGroup;
 			children = (
+				3315B27D219D57390072E698 /* LNAPICacheRequest.h */,
+				3315B27E219D57390072E698 /* LNAPICacheRequest.m */,
 				3302CF0E215DC3D00077AA98 /* LNAPIOpenInfomationListRequest.h */,
 				3302CF10215DC3D00077AA98 /* LNAPIOpenInfomationListRequest.m */,
 				3302CF0F215DC3D00077AA98 /* LNBaseNetworkRequest.h */,
@@ -496,6 +501,7 @@
 				3302CF0B215D064F0077AA98 /* LNRequestDelegateViewController.m in Sources */,
 				3318969B2151E6970057BC08 /* ViewController.m in Sources */,
 				3302CE812153C86C0077AA98 /* LNNetworkCache.m in Sources */,
+				3315B27F219D57390072E698 /* LNAPICacheRequest.m in Sources */,
 				331896A62151E69B0057BC08 /* main.m in Sources */,
 				331896CB2151F8810057BC08 /* LNNetworkRequest.m in Sources */,
 				3302CF12215DC3D00077AA98 /* LNAPIOpenInfomationListRequest.m in Sources */,

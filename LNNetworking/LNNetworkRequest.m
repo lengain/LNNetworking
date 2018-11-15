@@ -204,7 +204,7 @@
 
 #pragma mark - class methods
 
-+ (void)loadDataWithPath:(NSString *)path parameters:(NSDictionary *)parameters success:(nullable void (^)(BOOL))block {
++ (void)loadDataWithPath:(NSString *)path parameters:(nullable NSDictionary *)parameters success:(nullable void (^)(BOOL))block {
     [[self class] loadDataWithPath:path parameters:parameters callBack:^(BOOL success, id  _Nullable result) {
         if (block) {
             block(success);
@@ -212,15 +212,15 @@
     }];
 }
 
-+ (void)loadDataWithPath:(NSString *)path parameters:(NSDictionary *)parameters callBack:(nullable void (^)(BOOL, id _Nullable))callBack {
++ (void)loadDataWithPath:(NSString *)path parameters:(nullable NSDictionary *)parameters callBack:(nullable void (^)(BOOL, id _Nullable))callBack {
     [[self class] loadDataWithDelegate:nil path:path parameters:parameters callBack:callBack];
 }
 
-+ (void)loadDataWithDelegate:(id<LNNetworkRequestDelegate>)delegate path:(NSString *)path parameters:(NSDictionary *)parameters {
++ (void)loadDataWithDelegate:(id<LNNetworkRequestDelegate>)delegate path:(NSString *)path parameters:(nullable NSDictionary *)parameters {
     [[self class] loadDataWithDelegate:delegate path:path parameters:parameters callBack:nil];
 }
 
-+ (void)loadDataWithDelegate:(id <LNNetworkRequestDelegate>)delegate path:(NSString *)path parameters:(NSDictionary *)parameters callBack:(nullable void (^)(BOOL success,id _Nullable result))callBack {
++ (void)loadDataWithDelegate:(id <LNNetworkRequestDelegate>)delegate path:(NSString *)path parameters:(nullable NSDictionary *)parameters callBack:(nullable void (^)(BOOL success,id _Nullable result))callBack {
     LNNetworkRequest *request = [[[self class] alloc] init];
     request.delegate = delegate;
     [request loadDataWithPath:path parameters:parameters callBack:callBack];

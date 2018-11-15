@@ -109,10 +109,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - class methods
 
-+ (void)loadDataWithPath:(NSString *)path parameters:(NSDictionary *)parameters success:(nullable void (^)(BOOL success))block;
-+ (void)loadDataWithPath:(NSString *)path parameters:(NSDictionary *)parameters callBack:(nullable void (^)(BOOL success,id _Nullable result))callBack;
-+ (void)loadDataWithDelegate:(id<LNNetworkRequestDelegate>)delegate path:(NSString *)path parameters:(NSDictionary *)parameters;
-+ (void)loadDataWithDelegate:(nullable id <LNNetworkRequestDelegate>)delegate path:(NSString *)path parameters:(NSDictionary *)parameters callBack:(nullable void (^)(BOOL success,id _Nullable result))callBack;
++ (void)loadDataWithPath:(NSString *)path parameters:(nullable NSDictionary *)parameters success:(nullable void (^)(BOOL success))block;
++ (void)loadDataWithPath:(NSString *)path parameters:(nullable NSDictionary *)parameters callBack:(nullable void (^)(BOOL success,id _Nullable result))callBack;
++ (void)loadDataWithDelegate:(id<LNNetworkRequestDelegate>)delegate path:(NSString *)path parameters:(nullable NSDictionary *)parameters;
++ (void)loadDataWithDelegate:(nullable id <LNNetworkRequestDelegate>)delegate path:(NSString *)path parameters:(nullable NSDictionary *)parameters callBack:(nullable void (^)(BOOL success,id _Nullable result))callBack;
 
 
 @end

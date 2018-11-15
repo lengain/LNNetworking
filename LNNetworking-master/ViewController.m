@@ -10,6 +10,7 @@
 #import "LNAPIOpenInfomationListRequest.h"
 #import "LNTableHeaderView.h"
 #import "LNRequestDelegateViewController.h"
+#import "LNAPICacheRequest.h"
 @interface ViewController ()
 
 @property (nonatomic, strong) NSArray *titleArray;
@@ -24,6 +25,8 @@ static NSString *LNTableHeaderViewReuseId = @"ViewController.LNTableHeaderView";
 - (NSArray *)titleArray {
     return @[@"Normal Request",
              @"Delegate",
+             @"Cache Request",
+             @"Judge Result",
              ];
 }
 
@@ -76,11 +79,21 @@ static NSString *LNTableHeaderViewReuseId = @"ViewController.LNTableHeaderView";
             }
             break;
             case 2:{
-                
+                [LNAPICacheRequest requestInfomationListComplete:^(id  _Nonnull result) {
+                    if (result) {
+                        NSLog(@"LNAPIOpenInfomationListRequest:请求成功");
+                    }
+                }];
             }
             break;
             case 3:{
-                
+                [LNAPIJudgeRequest requestWithJudgeBlock:^(BOOL success) {
+                    if (success) {
+                        NSLog(@"Request Success");
+                    }else {
+                        NSLog(@"Request File");
+                    }
+                }];
             }
             break;
         default:

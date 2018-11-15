@@ -2,8 +2,9 @@
 #  Be sure to run `pod spec lint LNNetworking.podspec' to ensure this is a
 #  valid spec and to remove all comments including this before submitting the spec.
 #  run `pod cache clean LNNetworking` or `pod cache clean --all`
-#  run `pod lib lint LNNetworking.podspec --allow-warnings` can ignore the warnings
-#  run `pod repo push lengain LNNetworking.podspec` to LNSpecs
+#  run `pod lib lint LNNetwork.podspec --allow-warnings` can ignore the warnings
+#  run `pod repo push lengain LNNetwork.podspec` to LNSpecs
+#  pod trunk push LNNetwork.podspec
 
 
 Pod::Spec.new do |s|
@@ -25,7 +26,7 @@ Pod::Spec.new do |s|
   #   * Write the description between the DESC delimiters below.
   #   * Finally, don't worry about the indent, CocoaPods strips it!
   s.description  = <<-DESC
-                    LNNetworking基于AFNetworking3.x,主要用来发起请求,监听请求状态,接收请求结果,处理缓存逻辑,初步处理数据,功能点有:
+                    LNNetwork基于AFNetworking3.x,主要用来发起请求,监听请求状态,接收请求结果,处理缓存逻辑,初步处理数据,功能点有:
 支持Get Post Post(上传数据) Head Put Patch Delete
 支持缓存,可配置过期时间等
 支持Delegate,Block两种回调策略,可自由配置
