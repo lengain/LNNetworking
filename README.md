@@ -16,6 +16,9 @@ LNNetwork is mainly used to initiate the request, listen to the request status, 
 support cocoapods 
 
  `pod 'LNNetwork'`
+
+if you not found it, please execute `pod setup` and pod again.
+   
  
 ### License
 
@@ -35,6 +38,8 @@ LNNetwork基于AFNetworking3.x,主要用来发起请求,监听请求状态,接�
 支持使用cocoapods安装
 
  `pod 'LNNetwork'`
+ 
+ 如果没有找到这个库，请运行`pod setup` 后，再次pod安装。
  
  ### 证书
  
