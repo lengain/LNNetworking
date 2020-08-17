@@ -63,7 +63,7 @@
         }
     }
     //request;请求
-    self.task = [[LNNetworkManager shareManager] requestMethod:self.requestMethod path:path parameters:parameters constructingBodyWithBlock:block progress:uploadProgress result:^(id  _Nullable result, NSError * _Nullable error) {
+    self.task = [[LNNetworkManager shareManager] requestMethod:self.requestMethod path:path parameters:parameters headers:[self requestHeaders] constructingBodyWithBlock:block progress:uploadProgress result:^(id  _Nullable result, NSError * _Nullable error) {
         //请求成功再判断是否需要缓存，请求失败则不缓存。
         if (result != nil) {
             [self networkCache:result];
@@ -72,6 +72,14 @@
         [self requestEnd];
     }];
     self.requestIdentifier = self.task.taskIdentifier;
+}
+
+- (NSDictionary<NSString *,NSString *> *)requestHeaders {
+    NSDictionary<NSString *,NSString *> *headers = nil;
+    if ([[LNNetworkManager shareManager].interceptor respondsToSelector:@selector(globalHeaderWithManager:)]) {
+        headers = [[LNNetworkManager shareManager].interceptor globalHeaderWithManager:[LNNetworkManager shareManager]];
+    }
+    return headers;
 }
 
 - (void)resetBeginningState:(NSDictionary *)parameters {}

@@ -80,6 +80,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithDelegate:(id <LNNetworkRequestDelegate>)delegate;
 
+- (nullable NSDictionary<NSString *,NSString *> *)requestHeaders;
+
 - (void)loadDataWithPath:(NSString *)path;
 - (void)loadDataWithPath:(NSString *)path parameters:(nullable NSDictionary *)parameters;
 - (void)loadDataWithPath:(NSString *)path parameters:(nullable NSDictionary *)parameters callBack:(nullable void (^)(BOOL success,id _Nullable result))callBack;
@@ -87,6 +89,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)loadDataWithPath:(NSString *)path parameters:(nullable NSDictionary *)parameters  constructingBodyWithBlock:(nullable void (^)(id<AFMultipartFormData> _Nonnull))block progress:(nullable void (^)(NSProgress * _Nullable))uploadProgress callBack:(nullable void (^)(BOOL success,id _Nullable result))callBack;
 
 - (void)setLoadedAllData:(BOOL)loadedAllData;
+
 
 
 /**

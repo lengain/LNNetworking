@@ -1,11 +1,11 @@
 # Uncomment the next line to define a global platform for your project
-platform :ios, '8.0'
+platform :ios, '9.0'
 
 target 'LNNetworking-master' do
   # Uncomment the next line if you're using Swift or would like to use dynamic frameworks
   # use_frameworks!
   # Pods for LNNetworking-master
-   pod 'AFNetworking', '~> 3.2.1'
+   pod 'AFNetworking'
    pod 'SVProgressHUD'
    pod 'YYModel'
   target 'LNNetworking-masterTests' do

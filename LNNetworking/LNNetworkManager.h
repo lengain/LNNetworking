@@ -42,6 +42,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSDictionary *)manager:(LNNetworkManager *)manager processParameters:(NSDictionary *)parameters;
 - (void)manager:(LNNetworkManager *)manager afterCallingAPIWithParameters:(NSDictionary *)parameters;
 
+/// 全局设置Header
+/// @param manager LNNetworkManager
+- (nullable NSDictionary<NSString *,NSString *> *)globalHeaderWithManager:(LNNetworkManager *)manager;
+
 @end
 
 
@@ -65,7 +69,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong, readonly) AFHTTPSessionManager *sessionManager;
 
 
-- (NSURLSessionDataTask *)requestMethod:(LNNetworkRequestMethod)requestMethod path:(NSString *)URLString parameters:(nullable id)parameters constructingBodyWithBlock:(nullable void (^)(id<AFMultipartFormData> _Nonnull))block progress:(nullable void (^)(NSProgress * _Nullable))uploadProgress result:(void (^)(id _Nullable result, NSError * _Nullable error))result;
+- (NSURLSessionDataTask *)requestMethod:(LNNetworkRequestMethod)requestMethod path:(NSString *)URLString parameters:(nullable id)parameters headers:(nullable NSDictionary<NSString *,NSString *> *)headers constructingBodyWithBlock:(nullable void (^)(id<AFMultipartFormData> _Nonnull))block progress:(nullable void (^)(NSProgress * _Nullable))uploadProgress result:(void (^)(id _Nullable result, NSError * _Nullable error))result;
 
 - (void)cancleRequestWithIdentifier:(NSUInteger)identifier;
 

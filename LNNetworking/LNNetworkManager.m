@@ -39,11 +39,11 @@
 
 #pragma mark - Request
 
-- (NSURLSessionDataTask *)requestMethod:(LNNetworkRequestMethod)requestMethod path:(NSString *)URLString parameters:(id)parameters constructingBodyWithBlock:(void (^)(id<AFMultipartFormData> _Nonnull))block progress:(void (^)(NSProgress * _Nonnull))uploadProgress success:(void (^)(NSURLSessionDataTask * _Nonnull, id _Nonnull))success failure:(void (^)(NSURLSessionDataTask * _Nonnull, NSError * _Nonnull))failure {
+- (NSURLSessionDataTask *)requestMethod:(LNNetworkRequestMethod)requestMethod path:(NSString *)URLString parameters:(id)parameters headers:(nullable NSDictionary<NSString *,NSString *> *)headers constructingBodyWithBlock:(void (^)(id<AFMultipartFormData> _Nonnull))block progress:(void (^)(NSProgress * _Nonnull))uploadProgress success:(void (^)(NSURLSessionDataTask * _Nonnull, id _Nonnull))success failure:(void (^)(NSURLSessionDataTask * _Nonnull, NSError * _Nonnull))failure {
     return nil;
 }
 
-- (NSURLSessionDataTask *)requestMethod:(LNNetworkRequestMethod)requestMethod path:(NSString *)URLString parameters:(nullable id)parameters constructingBodyWithBlock:(nullable void (^)(id<AFMultipartFormData> _Nonnull))block progress:(nullable void (^)(NSProgress * _Nullable))uploadProgress result:(void (^)(id _Nullable result, NSError * _Nullable error))result {
+- (NSURLSessionDataTask *)requestMethod:(LNNetworkRequestMethod)requestMethod path:(NSString *)URLString parameters:(nullable id)parameters headers:(nullable NSDictionary<NSString *,NSString *> *)headers constructingBodyWithBlock:(nullable void (^)(id<AFMultipartFormData> _Nonnull))block progress:(nullable void (^)(NSProgress * _Nullable))uploadProgress result:(void (^)(id _Nullable result, NSError * _Nullable error))result {
     NSDictionary *processedDictionary;
     if (self.interceptor && [self.interceptor respondsToSelector:@selector(manager:processParameters:)]) {
         processedDictionary = [self.interceptor manager:self processParameters:parameters];
@@ -76,17 +76,17 @@
     switch (requestMethod) {
             case LNNetworkRequestMethodPost:{
                 if (block != nil) {
-                    return [self.sessionManager POST:URLString parameters:processedDictionary constructingBodyWithBlock:block progress:uploadProgress success:success failure:failure];
+                    return [self.sessionManager POST:URLString parameters:processedDictionary headers:headers constructingBodyWithBlock:block progress:nil success:success failure:failure];
                 }else {
-                    return [self.sessionManager POST:URLString parameters:processedDictionary progress:uploadProgress success:success failure:failure];
+                    return [self.sessionManager POST:URLString parameters:processedDictionary headers:headers progress:nil success:success failure:failure];
                 }
             }
             break;
             case LNNetworkRequestMethodGet: {
-                return [self.sessionManager GET:URLString parameters:processedDictionary progress:uploadProgress success:success failure:failure];
+                return [self.sessionManager GET:URLString parameters:processedDictionary headers:headers progress:uploadProgress success:success failure:failure];
             }
             case LNNetworkRequestMethodHead: {
-                return [self.sessionManager HEAD:URLString parameters:processedDictionary success:^(NSURLSessionDataTask * _Nonnull task) {
+                return [self.sessionManager HEAD:URLString parameters:processedDictionary headers:headers success:^(NSURLSessionDataTask * _Nonnull task) {
                     result([[NSNumber alloc] initWithBool:YES],nil);
                 } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
                     result([[NSNumber alloc] initWithBool:NO],error);
@@ -94,15 +94,15 @@
             }
             break;
             case LNNetworkRequestMethodPut: {
-                return [self.sessionManager PUT:URLString parameters:processedDictionary success:success failure:failure];
+                return [self.sessionManager PUT:URLString parameters:processedDictionary headers:headers success:success failure:failure];
             }
             break;
             case LNNetworkRequestMethodPatch: {
-                return [self.sessionManager PATCH:URLString parameters:processedDictionary success:success failure:failure];
+                return [self.sessionManager PATCH:URLString parameters:processedDictionary headers:headers success:success failure:failure];
             }
             break;
             case LNNetworkRequestMethodDelete: {
-                return [self.sessionManager DELETE:URLString parameters:processedDictionary success:success failure:failure];
+                return [self.sessionManager DELETE:URLString parameters:processedDictionary headers:headers success:success failure:failure];
             }
         default:
             return nil;
@@ -115,7 +115,7 @@
 
 - (void)cancleAllRequest {
     [self.requestArray removeAllObjects];
-    [self.sessionManager invalidateSessionCancelingTasks:YES];
+    [self.sessionManager invalidateSessionCancelingTasks:YES resetSession:NO];
 }
 
 - (void)cancleRequestWithIdentifier:(NSUInteger)identifier {
