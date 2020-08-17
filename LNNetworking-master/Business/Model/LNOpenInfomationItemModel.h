@@ -12,10 +12,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface LNOpenInfomationItemModel : LNBaseModel
 
-@property (nonatomic, strong) NSString *userName;
-@property (nonatomic, strong) NSString *type;
+@property (nonatomic, strong) NSString *name;
+@property (nonatomic, strong) NSString *repoId;
 @property (nonatomic, strong) NSString *text;
-@property (nonatomic, assign) NSInteger comment;
 
 @end
 

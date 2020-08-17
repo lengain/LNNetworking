@@ -35,11 +35,12 @@
             callBack(NO,nil);
         }
     }else{
+        [self processData:result callBack:callBack];
+        return;
         NSNumber *code = [result objectForKey:@"code"];
         NSLog(@"%@",code);
         if (code.intValue == 200) {
             id data = [result objectForKey:@"data"];
-            [self processData:data callBack:callBack];
         }else{
             NSString *message = [result objectForKey:@"msg"];
             if (message && message.length) {

@@ -11,7 +11,9 @@
 @implementation LNOpenInfomationItemModel
 
 + (NSDictionary *)modelCustomPropertyMapper {
-    return @{@"userName":@"username"};
+    return @{@"repoId":@"id",
+             @"text":@"description"
+    };
 }
 
 @end

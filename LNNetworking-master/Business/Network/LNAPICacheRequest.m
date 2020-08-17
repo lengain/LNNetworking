@@ -11,9 +11,13 @@
 @implementation LNAPICacheRequest
 
 + (void)requestInfomationListComplete:(void (^)(id _Nonnull))complete {
-    [LNAPICacheRequest loadDataWithPath:@"/satinGodApi" parameters:@{@"type":@(1),@"page":@(1)} callBack:^(BOOL success, id  _Nullable result) {
+    [LNAPICacheRequest loadDataWithPath:@"/users/lengain/repos" parameters:nil callBack:^(BOOL success, id  _Nullable result) {
         complete(result);
     }];
+}
+
+- (LNNetworkRequestMethod)requestMethod {
+    return LNNetworkRequestMethodGet;
 }
 
 - (BOOL)shouldCache {

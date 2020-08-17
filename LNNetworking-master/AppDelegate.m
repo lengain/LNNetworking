@@ -20,7 +20,7 @@
     //network global
     //测试接口列表 https://blog.csdn.net/rosener/article/details/81699698
     LNNetworkConfiguration *configuration = [[LNNetworkConfiguration alloc] init];
-    configuration.baseURL = [NSURL URLWithString:@"https://www.apiopen.top/"];
+    configuration.baseURL = [NSURL URLWithString:@"https://api.github.com"];
     configuration.securityPolicy = [AFSecurityPolicy defaultPolicy];
     /*
     configuration.securityPolicy = [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeCertificate withPinnedCertificates:[AFSecurityPolicy certificatesInBundle:[NSBundle mainBundle]]];
@@ -61,6 +61,17 @@
 
 - (NSDictionary *)manager:(LNNetworkManager *)manager processParameters:(NSDictionary *)parameters {
     return parameters;
+}
+
+- (NSDictionary<NSString *,NSString *> *)globalHeaderWithManager:(LNNetworkManager *)manager {
+    return @{
+//        @"Authorization":@"token 74dbae54af9759df370245d9051743eb2e2ac2d1",
+             @"User-Agent":@"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.61 Safari/537.",
+             @"Connection":@"keep-alive",
+             @"Host":@"api.github.com",
+             @"Cache-Control":@"no-cache",
+             @"Accept":@"application/vnd.github.v3+json",
+    };
 }
 
 @end
