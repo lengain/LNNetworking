@@ -17,7 +17,7 @@ Pod::Spec.new do |s|
   #
 
   s.name         = "LNNetwork"
-  s.version      = "0.0.1"
+  s.version      = "0.0.2
   s.summary      = "iOS Networking based on AFNetworking"
 
   # This description is used to generate tags and improve search results.
@@ -60,7 +60,7 @@ Pod::Spec.new do |s|
   #
 
   # s.platform     = :ios
-  s.platform     = :ios, "8.0"
+  s.platform     = :ios, "9.0"
 
   #  When using multiple platforms
   # s.ios.deployment_target = "5.0"
