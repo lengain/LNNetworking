@@ -17,7 +17,7 @@ Pod::Spec.new do |s|
   #
 
   s.name         = "LNNetwork"
-  s.version      = "0.0.2
+  s.version      = "0.0.2"
   s.summary      = "iOS Networking based on AFNetworking"
 
   # This description is used to generate tags and improve search results.
@@ -26,7 +26,7 @@ Pod::Spec.new do |s|
   #   * Write the description between the DESC delimiters below.
   #   * Finally, don't worry about the indent, CocoaPods strips it!
   s.description  = <<-DESC
-                    LNNetwork基于AFNetworking3.x,主要用来发起请求,监听请求状态,接收请求结果,处理缓存逻辑,初步处理数据,功能点有:
+                    LNNetwork基于AFNetworking4.x,主要用来发起请求,监听请求状态,接收请求结果,处理缓存逻辑,初步处理数据,功能点有:
 支持Get Post Post(上传数据) Head Put Patch Delete
 支持缓存,可配置过期时间等
 支持Delegate,Block两种回调策略,可自由配置
